@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD7210B71E688A5200C475AA /* ColorPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7210B51E688A5200C475AA /* ColorPickerViewController.swift */; };
+		CD7210BA1E688A7700C475AA /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7210B91E688A7700C475AA /* ColorPickerView.swift */; };
+		CD7210BC1E68AB4400C475AA /* ColorPickerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7210BB1E68AB4400C475AA /* ColorPickerViewController.xib */; };
 		CDD7B1301E64C40400E380A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD7B12F1E64C40400E380A4 /* AppDelegate.swift */; };
 		CDD7B1321E64C40400E380A4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD7B1311E64C40400E380A4 /* ViewController.swift */; };
 		CDD7B1351E64C40400E380A4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDD7B1331E64C40400E380A4 /* Main.storyboard */; };
@@ -17,6 +20,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CD7210B51E688A5200C475AA /* ColorPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
+		CD7210B91E688A7700C475AA /* ColorPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
+		CD7210BB1E68AB4400C475AA /* ColorPickerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ColorPickerViewController.xib; path = ../../ColorPickerViewController.xib; sourceTree = "<group>"; };
 		CDD7B12C1E64C40400E380A4 /* TouchTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TouchTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDD7B12F1E64C40400E380A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CDD7B1311E64C40400E380A4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -63,6 +69,9 @@
 				CDD7B1311E64C40400E380A4 /* ViewController.swift */,
 				CDD7B1451E64CE1E00E380A4 /* DrawView.swift */,
 				CDD7B1331E64C40400E380A4 /* Main.storyboard */,
+				CD7210B51E688A5200C475AA /* ColorPickerViewController.swift */,
+				CD7210BB1E68AB4400C475AA /* ColorPickerViewController.xib */,
+				CD7210B91E688A7700C475AA /* ColorPickerView.swift */,
 				CDD7B1361E64C40400E380A4 /* Assets.xcassets */,
 				CDD7B1381E64C40400E380A4 /* LaunchScreen.storyboard */,
 				CDD7B13B1E64C40400E380A4 /* Info.plist */,
@@ -131,6 +140,7 @@
 			files = (
 				CDD7B13A1E64C40400E380A4 /* LaunchScreen.storyboard in Resources */,
 				CDD7B1371E64C40400E380A4 /* Assets.xcassets in Resources */,
+				CD7210BC1E68AB4400C475AA /* ColorPickerViewController.xib in Resources */,
 				CDD7B1351E64C40400E380A4 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -142,7 +152,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD7210B71E688A5200C475AA /* ColorPickerViewController.swift in Sources */,
 				CDD7B1421E64CBBE00E380A4 /* Line.swift in Sources */,
+				CD7210BA1E688A7700C475AA /* ColorPickerView.swift in Sources */,
 				CDD7B1321E64C40400E380A4 /* ViewController.swift in Sources */,
 				CDD7B1461E64CE1E00E380A4 /* DrawView.swift in Sources */,
 				CDD7B1301E64C40400E380A4 /* AppDelegate.swift in Sources */,
@@ -307,6 +319,7 @@
 				CDD7B1401E64C40400E380A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

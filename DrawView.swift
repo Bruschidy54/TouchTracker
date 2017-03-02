@@ -8,12 +8,14 @@
 
 import UIKit
 
-class DrawView: UIView, UIGestureRecognizerDelegate {
+class DrawView: UIView, UIGestureRecognizerDelegate, ColorChangeMenuDelegate {
     
     var currentLines = [NSValue:Line]()
     var currentCircle =  Line()
     var finishedLines = [Line]()
     var moveRecognizer: UIPanGestureRecognizer!
+    var currentThickness: CGFloat = 10
+    
     var selectedLineIndex: Int? {
         didSet {
             if selectedLineIndex == nil {
@@ -36,14 +38,15 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
             setNeedsDisplay()
         }
     }
-    @IBInspectable var lineThickness: CGFloat = 10 {
-        didSet {
-            setNeedsDisplay()
-        }
-    }
+//    @IBInspectable var lineThickness: CGFloat = 10 {
+//        didSet {
+//            setNeedsDisplay()
+//        }
+//    }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        
         
         let doubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(doubleTap))
         doubleTapRecognizer.numberOfTapsRequired = 2
@@ -57,6 +60,11 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
         addGestureRecognizer(longPressRecognizer)
+        
+        let tripleSwipe = UISwipeGestureRecognizer(target: self, action: #selector(threeFingerSwipe))
+        tripleSwipe.numberOfTouchesRequired = 3 // 3 finger swipe
+        addGestureRecognizer(tripleSwipe)
+        
         
         moveRecognizer = UIPanGestureRecognizer(target: self, action: #selector(moveLine))
         moveRecognizer.delegate = self
@@ -80,14 +88,14 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
             
             let circlePath = UIBezierPath(arcCenter: CGPoint(x: centerX,y: centerY), radius: radius, startAngle: CGFloat(0), endAngle: CGFloat(M_PI*2), clockwise: true)
             
-            circlePath.lineWidth = lineThickness
+            circlePath.lineWidth = line.thickness
             
             circlePath.stroke()
         }
         else {
         
         let path = UIBezierPath()
-        path.lineWidth = lineThickness
+        path.lineWidth = line.thickness
         path.lineCapStyle = CGLineCap.round
         
         path.move(to: line.begin)
@@ -155,6 +163,7 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
 //        print(#function)
         
         
+        
         if touches.count == 2 {
             let beginTouch = touches[touches.startIndex] as UITouch
             let endTouch = touches[touches.index(touches.startIndex, offsetBy: 1)] as UITouch
@@ -162,13 +171,14 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
             currentCircle.begin = beginTouch.location(in:self)
             currentCircle.end = endTouch.location(in:self)
             currentCircle.isCircle = true
+            currentCircle.thickness = 10
         }
         else {
         
         for touch in touches {
             let location = touch.location(in: self)
             
-            let newLine = Line(begin: location, end: location, isCircle: false)
+            let newLine = Line(begin: location, end: location, isCircle: false, thickness: 10)
             
             let key = NSValue(nonretainedObject: touch)
             
@@ -229,6 +239,7 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
                 
                 currentCircle.begin = beginTouch.location(in:self)
                 currentCircle.end = endTouch.location(in:self)
+                currentCircle.thickness = currentThickness
                     
                 finishedLines.append(currentCircle)
                 currentCircle = Line()
@@ -243,6 +254,7 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
                 
                 if var line = currentLines[key] {
                 line.end = touch.location(in: self)
+                line.thickness = currentThickness
                 
                 finishedLines.append(line)
                 currentLines.removeValue(forKey: key)
@@ -258,6 +270,7 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         print("Recognized a double tap")
         
         
+        
         selectedLineIndex = nil
         currentCircle = Line()
         currentLines.removeAll()
@@ -267,6 +280,17 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
     
     func tap(gestureRecognizer: UIGestureRecognizer) {
         print("Recognized a tap")
+        
+//         let bundle = Bundle(for: type(of: self))
+//        let colorPickerViewController = ColorPickerViewController(
+//            nibName:"ColorPickerViewController",
+//            bundle: bundle)
+//        
+//        
+//        let colorPickerView = colorPickerViewController.view
+//        self.addSubview(colorPickerView!)
+
+        
         
         let point = gestureRecognizer.location(in: self)
         selectedLineIndex = indexOfLineAtPoint(point: point)
@@ -294,10 +318,13 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         }
         
         setNeedsDisplay()
+        
     }
     
     func longPress(gestureRecognizer: UIGestureRecognizer) {
         print("Recognized a long press")
+        
+        
         
         if gestureRecognizer.state == .began {
             let point = gestureRecognizer.location(in: self)
@@ -314,12 +341,17 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
         }
     
     func moveLine(gestureRecognizer: UIPanGestureRecognizer) {
-        print("Recognized a pan")
+//        print("Recognized a pan")
         
         
-        if let index = selectedLineIndex {
+        
+            
             // When the pan recognizer changes its position...
-            if gestureRecognizer.state == .changed {
+            if gestureRecognizer.state == .changed{
+                
+                 if let index = selectedLineIndex {
+                
+                if currentCircle.isCircle == false && currentLines.isEmpty == true{
                 // How far has the pan moved?
                 let translation = gestureRecognizer.translation(in: self)
                 
@@ -329,17 +361,51 @@ class DrawView: UIView, UIGestureRecognizerDelegate {
                 finishedLines[index].end.x += translation.x
                 finishedLines[index].end.y += translation.y
                 
+                
                 gestureRecognizer.setTranslation(CGPoint.zero, in: self)
                 
+                
+                
                 // Redraw the screen
-                setNeedsDisplay()
+                    
+                    setNeedsDisplay() }
             }
-        }
-        else {
-            // If no line is selected, do no do anything
-            return
-        }
+                
+                    else {
+                        // If no line is selected, do not do anything
+                        return
+                    }
+            }
+            else if gestureRecognizer.state == .ended {
+                print("pan ended")
+                let velocity = gestureRecognizer.velocity(in: self)
+                let magnitude = sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y))
+                let slideMultiplier = (75 * invSqrt(x: Float(magnitude))) + 5
+                print(slideMultiplier)
+                
+                currentThickness = CGFloat(slideMultiplier)
+                
+                setNeedsDisplay()
+                
+            }
+        
     }
+    
+    func threeFingerSwipe (gestureRecognizer: UIPanGestureRecognizer) {
+        
+        print("Three finger swipe recognized")
+        
+        
+//        let colorPickerViewController = ColorPickerViewController(
+//            nibName:"ColorPickerViewController",
+//            bundle: nil
+//        )
+//        let colorPickerView = colorPickerViewController.view as! ColorPickerView
+//        colorPickerView.frame = self.frame
+//        self.addSubview(colorPickerView)
+//        
+    }
+
     
 
 func deleteLine(sender: AnyObject) {
@@ -399,6 +465,21 @@ func deleteLine(sender: AnyObject) {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+            return true
     }
+    
+    func invSqrt(x: Float) -> Float {
+        let halfx = 0.5 * x
+        var i = x.bitPattern
+        i = 0x5f3759df - (i >> 1)
+        var y = Float(bitPattern: i)
+        y = y * (1.5 - (halfx * y * y))
+        return y
+    }
+    
+    func didPickColor(color: UIColor) {
+        finishedLineColor = color
+    }
+    
+    
 }
